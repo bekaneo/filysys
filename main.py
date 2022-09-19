@@ -1,22 +1,15 @@
-from pathlib import Path
-import time
-from decouple import config
+import shutil
 
-HOME_FOLDER = config('HOME_FOLDER')
-
-HOME_PATH = Path(HOME_FOLDER)
+from utils import list_generator, check_file, HOME_PATH
 
 
-def list_generator(pattern='*'):
-    name_max_len = len((max(HOME_PATH.iterdir(), key=lambda x: len(x.name))).name)
-    size_max_len = len(str((max(HOME_PATH.iterdir(), key=lambda x: x.stat().st_size)).stat().st_size))
-    for item in HOME_PATH.glob(pattern):
-        name = item.name.ljust(name_max_len, ' ')
-        size = str(item.stat().st_size).ljust(size_max_len, ' ')
-        created_at = time.ctime(item.stat().st_ctime)
-        modified_at = time.ctime(item.stat().st_mtime)
-        result = f'{name} | {size} bytes | Created at {created_at} | Modified at {modified_at}'
-        yield result
+def add_item(path):
+    exists, file, text = check_file(path)
+    if not exists:
+        return text
+
+    shutil.copy2(file, HOME_PATH)
+    return f'{file.name} added to folder'
 
 
 def list_items(pattern='*'):
@@ -24,15 +17,10 @@ def list_items(pattern='*'):
         print(item)
 
 
-def remove(file):
+def remove_item(file):
     file_path = HOME_PATH.joinpath(file)
     if file_path.exists():
         file_path.unlink()
-        print(f'{file} deleted')
-    else:
-        print(f'{file} file was not found')
+        return f'{file} deleted'
 
-
-list_items('*.py')
-remove('test.txt')
-list_items()
+    return f'{file} file was not found'
