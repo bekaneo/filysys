@@ -1,5 +1,5 @@
-from main import add_item, remove_item, list_items
-from utils import HOME_PATH, man
+from commands import add_item, remove_item, list_items
+from utils import man
 
 commands = {
     'add': add_item,
@@ -9,24 +9,21 @@ commands = {
     'help': man
 }
 
-if __name__ == '__main__':
-    while True:
-        command = input(f'{HOME_PATH}>: ').split()
+
+def controller(args):
+    if args[1] == 'exit':
+        commands[args[1]]()
+    elif args[1] == 'help':
+        print(commands[args[1]]())
+    elif args[1] == 'add':
+        print(commands[args[1]](args[2]))
+    elif args[1] == 'remove':
+        print(commands[args[1]](args[2]))
+    elif args[1] == 'list':
         try:
-            if command[0] == 'exit':
-                commands[command[0]]()
-            if command[0] == 'help':
-                commands[command[0]]()
-            if command[0] == 'add':
-                print(commands[command[0]](command[1]))
-            if command[0] == 'remove':
-                print(commands[command[0]](command[1]))
-            if command[0] == 'list':
-                try:
-                    commands[command[0]](command[1])
+            commands[args[1]](args[2])
 
-                except IndexError:
-                    commands[command[0]]()
-
-        except (KeyError, IndexError):
-            print(f'Command {command} does not exists. help - for manual')
+        except IndexError:
+            commands[args[1]]()
+    else:
+        print(f'Command <{" ".join(args[1:])}> was not found. help - for manual')
