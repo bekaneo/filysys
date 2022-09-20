@@ -1,15 +1,18 @@
 import shutil
+from pathlib import Path
 
-from utils import list_generator, check_file, HOME_PATH
+from utils import list_generator, HOME_PATH
 
 
 def add_item(path):
-    exists, file, text = check_file(path)
-    if not exists:
-        return text
-
+    file = Path(path)
+    home_file = HOME_PATH.joinpath(file.name)
+    if not file.exists():
+        exit(f'File {file} was not found')
+    if home_file.exists():
+        exit(f'File {file} already exists')
     shutil.copy2(file, HOME_PATH)
-    return f'{file.name} added to folder'
+    print(f'{file.name} added to folder')
 
 
 def list_items(pattern='*'):
@@ -21,8 +24,8 @@ def remove_item(file):
     file_path = HOME_PATH.joinpath(file)
     if file_path.exists():
         file_path.unlink()
-        return f'{file} deleted'
-
-    return f'{file} file was not found'
+        print(f'{file} deleted')
+    else:
+        print(f'{file} file was not found')
 
 

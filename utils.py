@@ -1,22 +1,9 @@
 from pathlib import Path
-from decouple import config
 
+from decouple import config
 
 HOME_FOLDER = config('HOME_FOLDER')
 HOME_PATH = Path(HOME_FOLDER)
-
-
-def check_file(path):
-    result = ''
-    file = Path(path)
-    home_file = HOME_PATH.joinpath(file.name)
-    if not file.exists():
-        result = f'File {file.name} does not exists'
-        return False, file, result
-    if home_file.exists():
-        result = f'File {home_file.name} already exists'
-        return False, file, result
-    return True, file, result
 
 
 def list_generator(pattern):
@@ -27,10 +14,10 @@ def list_generator(pattern):
         for file in files:
             yield file.name
     else:
-        yield f'files with pattern "{pattern}" was not found'
+        yield f'file not found'
 
 
-def man():
+def man(args):
     manual = '''
     >add: add file to filesys.
     Syntax: add <file_path/file_name>,
@@ -43,7 +30,4 @@ def man():
     >help: for manual
     Syntax: help
     '''
-    return manual
-
-
-
+    print(manual)
